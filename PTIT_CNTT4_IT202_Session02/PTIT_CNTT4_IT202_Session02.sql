@@ -1,0 +1,112 @@
+CREATE DATABASE IT202_Session02;
+USE IT202_Session02;
+
+-- Bài 1
+CREATE TABLE Class (
+    MaLop VARCHAR(10) PRIMARY KEY,
+    TenLop VARCHAR(50) NOT NULL,
+    NamHoc INT NOT NULL
+);
+
+CREATE TABLE Student (
+    MaSV VARCHAR(10) PRIMARY KEY,
+    HoTen VARCHAR(100) NOT NULL,
+    NgaySinh DATE,
+    MaLop VARCHAR(10) NOT NULL,
+    CONSTRAINT FK_LopHoc FOREIGN KEY (MaLop) REFERENCES Class(MaLop)
+);
+
+-- Bài 2
+CREATE TABLE Student_B3 (
+    MaSV VARCHAR(10) PRIMARY KEY,
+    HoTen VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Subject (
+    MaMonHoc VARCHAR(10) PRIMARY KEY,
+    TenMonHoc VARCHAR(100) NOT NULL,
+    SoTinChi INT NOT NULL,
+    CONSTRAINT CHK_SoTinChi CHECK (SoTinChi > 0)
+);
+
+-- Bài 3
+CREATE TABLE Enrollment (
+    MaSV VARCHAR(10),
+    MaMonHoc VARCHAR(10),
+    NgayDangKy DATE NOT NULL,
+    PRIMARY KEY (MaSV, MaMonHoc),
+    CONSTRAINT FK_Student_Enroll FOREIGN KEY (MaSV) REFERENCES Student_B3(MaSV),
+    CONSTRAINT FK_Subject_Enroll FOREIGN KEY (MaMonHoc) REFERENCES Subject(MaMonHoc)
+);
+
+-- Bài 4
+CREATE TABLE Teacher (
+    MaGV VARCHAR(10) PRIMARY KEY,
+    HoTen VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE
+);
+
+ALTER TABLE Subject 
+ADD COLUMN MaGV VARCHAR(10),
+ADD CONSTRAINT FK_Teacher_Subject FOREIGN KEY (MaGV) REFERENCES Teacher(MaGV);
+
+-- Bài 5
+CREATE TABLE Score (
+    MaSV VARCHAR(10),
+    MaMonHoc VARCHAR(10),
+    DiemQuaTrinh DECIMAL(4, 2),
+    DiemCuoiKy DECIMAL(4, 2),
+    PRIMARY KEY (MaSV, MaMonHoc),
+    CONSTRAINT FK_Student_Score FOREIGN KEY (MaSV) REFERENCES Student_B3(MaSV),
+    CONSTRAINT FK_Subject_Score FOREIGN KEY (MaMonHoc) REFERENCES Subject(MaMonHoc),
+    CONSTRAINT CHK_DiemQuaTrinh CHECK (DiemQuaTrinh BETWEEN 0 AND 10),
+    CONSTRAINT CHK_DiemCuoiKy CHECK (DiemCuoiKy BETWEEN 0 AND 10)
+);
+
+-- Bài 6
+CREATE TABLE Class_Final (
+    MaLop VARCHAR(20) PRIMARY KEY,
+    TenLop VARCHAR(100) NOT NULL,
+    NamHoc INT NOT NULL CHECK (NamHoc >= 2000)
+);
+
+CREATE TABLE Teacher_Final (
+    MaGV VARCHAR(20) PRIMARY KEY,
+    HoTen VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE Subject_Final (
+    MaMonHoc VARCHAR(20) PRIMARY KEY,
+    TenMonHoc VARCHAR(100) NOT NULL,
+    SoTinChi INT NOT NULL CHECK (SoTinChi > 0),
+    MaGV VARCHAR(20),
+    CONSTRAINT FK_Final_Subject_Teacher FOREIGN KEY (MaGV) REFERENCES Teacher_Final(MaGV)
+);
+
+CREATE TABLE Student_Final (
+    MaSV VARCHAR(20) PRIMARY KEY,
+    HoTen VARCHAR(100) NOT NULL,
+    NgaySinh DATE,
+    MaLop VARCHAR(20),
+    CONSTRAINT FK_Final_Student_Class FOREIGN KEY (MaLop) REFERENCES Class_Final(MaLop)
+);
+
+CREATE TABLE Enrollment_Final (
+    MaSV VARCHAR(20),
+    MaMonHoc VARCHAR(20),
+    NgayDangKy DATE DEFAULT (CURRENT_DATE),
+    PRIMARY KEY (MaSV, MaMonHoc), 
+    CONSTRAINT FK_Final_Enroll_Student FOREIGN KEY (MaSV) REFERENCES Student_Final(MaSV),
+    CONSTRAINT FK_Final_Enroll_Subject FOREIGN KEY (MaMonHoc) REFERENCES Subject_Final(MaMonHoc)
+);
+
+CREATE TABLE Score_Final (
+    MaSV VARCHAR(20),
+    MaMonHoc VARCHAR(20),
+    DiemQuaTrinh DECIMAL(4,2) CHECK (DiemQuaTrinh BETWEEN 0 AND 10),
+    DiemCuoiKy DECIMAL(4,2) CHECK (DiemCuoiKy BETWEEN 0 AND 10),
+    PRIMARY KEY (MaSV, MaMonHoc), 
+    CONSTRAINT FK_Final_Score_Student FOREIGN KEY (MaSV) REFERENCES Student_Final(MaSV),
+    CONSTRAINT FK_Final_Score_Subject FOREIGN KEY (MaMonHoc) REFERENCES Subject_Final(MaMonHoc)
+);
