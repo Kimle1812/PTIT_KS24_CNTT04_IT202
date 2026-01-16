@@ -71,11 +71,17 @@ END$$
 
 DELIMITER ;
 
+INSERT INTO Grades (StudentID, SubjectID, Score) VALUES ('SV03','SB03',-5);
+INSERT INTO Grades (StudentID, SubjectID, Score) VALUES ('SV02','SB01',12);
+SELECT * FROM Grades;
+
 -- Câu 2
 START TRANSACTION;
 INSERT INTO Students (StudentID, FullName, TotalDebt) VALUES ('SV02', 'Ha Bich Ngoc', 0);
 UPDATE Students SET TotalDebt = 5000000 WHERE StudentID = 'SV02';
 COMMIT;
+
+SELECT * FROM Students WHERE StudentID = 'SV04';
 
 -- PHẦN B – KHÁ
 
@@ -92,6 +98,9 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+UPDATE Grades SET Score = 6.0 WHERE StudentID = 'SV03' AND SubjectID = 'SB02';
+SELECT * FROM GradeLog;
 
 -- Câu 4
 DELIMITER $$
@@ -110,7 +119,10 @@ BEGIN
 END$$
 
 DELIMITER ;
- 
+
+CALL sp_PayTuition();
+SELECT * FROM Students WHERE StudentID = 'SV01';
+
 -- PHẦN C – GIỎI
 
 -- Câu 5
@@ -127,6 +139,8 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+UPDATE Grades SET Score = 9.0 WHERE StudentID = 'SV01' AND SubjectID = 'SB01';
 
 -- Câu 6
 DELIMITER $$
@@ -148,5 +162,9 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+CALL sp_DeleteStudentGrade('SV03','SB02');
+SELECT * FROM GradeLog WHERE StudentID='SV03';
+SELECT * FROM Grades WHERE StudentID='SV03' AND SubjectID='SB02';
 
 
